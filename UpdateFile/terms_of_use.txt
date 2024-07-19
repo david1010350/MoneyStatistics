@@ -1,17 +1,17 @@
-�q���ϥΪ̷q�i�ƶ�
-1.	Money Statistics �|�z�L�u�t�κ޲z���v�ӧR���ηs�W��Ʈw���e�A�ӽT�O�C���ƬҬO�̷s�����C�A�i��e�A�|�L���ϥΪ��v�Q�C
+﻿電腦使用者敬告事項
+1.	Money Statistics 會透過「系統管理員」來刪除及新增資料庫內容，來確保每月資料皆是最新版本。再進行前，會尊重使用者權利。
  
-�㦳�t�κ޲z���b�᪺�ϥΪ̥i�H�s���t�ΤW�����󶵥ءC�u���b���沈�n�ɡA�~�N�s���v���ű¤��z�H�����H�C	 
-*�p�ݧ�h���� Microsoft Windows �t�κ޲z����T�A�аѾ\�Ghttps://support.microsoft.com/zh-tw/windows/%E5%A6%82%E4%BD%95%E4%BB%A5%E7%B3%BB%E7%B5%B1%E7%AE%A1%E7%90%86%E5%93%A1%E8%BA%AB%E5%88%86%E7%99%BB%E5%85%A5-63267a09-9926-991a-1c77-d203160c8563�C
+具有系統管理員帳戶的使用者可以存取系統上的任何項目。只有在絕對必要時，才將存取權等級授予您信任的人。	 
+*如需更多有關 Microsoft Windows 系統管理員資訊，請參閱：https://support.microsoft.com/zh-tw/windows/%E5%A6%82%E4%BD%95%E4%BB%A5%E7%B3%BB%E7%B5%B1%E7%AE%A1%E7%90%86%E5%93%A1%E8%BA%AB%E5%88%86%E7%99%BB%E5%85%A5-63267a09-9926-991a-1c77-d203160c8563。
 
-2.	�ڭ̴L���C��ϥΪ̦b�ϥιq���W���v�Q�A�b�o�� App ���ڭ̤��|�`���������ϥΪ̪������ơA���|�ϥΥH�U�ɮסB���|�Ψ�L�޳N�W���n���ɮסG
+2.	我們尊重每位使用者在使用電腦上的權利，在這個 App 中我們不會蒐集任何有關使用者的任何資料，但會使用以下檔案、路徑或其他技術上必要的檔案：
  
-A.	�}���ɮת����|
-B.	�x�s�ɮת����|
-C.	�ɮ��x�s
-D.	�t�κ޲z�����v��	 
-David Kao ���u���ε{���}�o���O�@�ϥΪ̪����p�A�v�B�T�{�C����ƪ��I���ʤΤ��}�ʡA�æb Microsoft ��  https://docs.microsoft.com/zh-tw/dotnet/desktop/winforms/security-in-windows-forms-overview?view=netframeworkdesktop-4.8#developing-a-more-secure-windows-forms-application �w���ʷ��� ���Y�Ԫ��������������I�A�ϥΪ̦b�w�ˡB�}�ҤζפJ��Ʈw�ɡA�t�άҷ|�߰ݨϥΪ̬O�_�i�H�z�L�u�t�κ޲z���v�����Ӿާ@�C
+A.	開啟檔案的路徑
+B.	儲存檔案的路徑
+C.	檔案儲存
+D.	系統管理員的權限	 
+David Kao 遵守應用程式開發應保護使用者的隱私，逐步確認每筆資料的侵略性及公開性，並在 Microsoft 的  https://docs.microsoft.com/zh-tw/dotnet/desktop/winforms/security-in-windows-forms-overview?view=netframeworkdesktop-4.8#developing-a-more-secure-windows-forms-application 安全性概覽 中嚴謹的面對應有的風險，使用者在安裝、開啟及匯入資料庫時，系統皆會詢問使用者是否可以透過「系統管理員」身分來操作。
 
-������ε{���s�b�����I�W�A�ڭ̫D�`�����C�ϥΪ֦̾��̤j����v�ӨM�w�O�_�� Money Statistics ��������@�~�C
+對於應用程式存在的風險上，我們非常重視。使用者擁有最大選擇權來決定是否讓 Money Statistics 執行相關作業。
 
 ver.2203003
