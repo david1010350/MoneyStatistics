@@ -124,9 +124,9 @@
     const helpBtn = document.getElementById("helpBtn");
 
     // ✅ 安全啟動應用程式（無法右鍵複製）
-   // openBtn.addEventListener("click", () => {
-    //  window.location.assign(installUri);
-   // });
+    openBtn.addEventListener("click", () => {
+      window.location.assign(installUri);
+    });
 
     // ✅ 非 Windows 的按鈕（隱藏連結內容）
     helpBtn.addEventListener("click", () => {
