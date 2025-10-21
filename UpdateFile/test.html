@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>啟動安裝程式</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial;
+      text-align: center;
+      padding: 50px;
+    }
+    #error {
+      display: none;
+      color: red;
+      font-size: 20px;
+      margin-top: 20px;
+    }
+    #loading {
+      color: #333;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h1>正在檢查作業系統...</h1>
+  <p id="loading">請稍候，正在準備啟動安裝程式</p>
+  <p id="error">此作業系統不支援啟動安裝程式，請在 Windows 環境中開啟。</p>
+
+  <script>
+    // 自訂協定
+    const installUri = "msinstall://installms/";
+    // 若協定未註冊或被阻擋時的 fallback 頁面
+    const fallbackPage = "https://yourdomain.com/msinstall-help.html";
+
+    // 判斷是否是 Windows 作業系統
+    const isWindows = navigator.userAgent.includes("Windows") || navigator.platform.startsWith("Win");
+
+    if (isWindows) {
+      // 顯示提示
+      document.getElementById("loading").textContent = "偵測到 Windows，正在啟動安裝程式...";
+
+      // 嘗試開啟 msinstall://
+      try {
+        window.location.href = installUri;
+
+        // 若 2.5 秒內未離開此頁（代表沒有成功開啟外部程式），導向 fallback
+        const timer = setTimeout(() => {
+          window.location.href = fallbackPage;
+        }, 2500);
+
+        // 若使用者切換到別的視窗（成功開啟外部程式），取消 fallback
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden) clearTimeout(timer);
+        });
+      } catch (e) {
+        window.location.href = fallbackPage;
+      }
+    } else {
+      // 非 Windows 系統 → 顯示錯誤訊息
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("error").style.display = "block";
+      document.title = "不支援的作業系統";
+    }
+  </script>
+</body>
+</html>
