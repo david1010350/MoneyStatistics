@@ -5,14 +5,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>啟動安裝程式</title>
 
-  <!-- ✅ Bootstrap 5 CDN -->
+  <!-- ✅ Bootstrap 5 -->
   <link
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
     rel="stylesheet"
   />
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-  ></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <style>
     body {
@@ -49,6 +47,11 @@
       margin-top: 10px;
     }
 
+    #manualLink {
+      display: none;
+      margin-top: 20px;
+    }
+
     footer {
       position: fixed;
       bottom: 10px;
@@ -59,18 +62,31 @@
     }
   </style>
 </head>
-
 <body>
   <!-- 左上角 LOGO -->
   <header>
-    <img src="https://www.dropbox.com/scl/fi/ew7cqkplri63ndno3gcb9/MSSign.png?rlkey=ladauape28nwec1zek5s9vd1o&st=enrs2v4x&dl=1" alt="MSSign Logo" />
+    <img
+      src="https://www.dropbox.com/scl/fi/ew7cqkplri63ndno3gcb9/MSSign.png?rlkey=ladauape28nwec1zek5s9vd1o&st=enrs2v4x&dl=1"
+      alt="MSSign Logo"
+    />
   </header>
 
   <!-- 主要內容 -->
   <main class="container mt-5 pt-5">
     <h1 class="display-6 fw-bold mb-3">正在檢查作業系統...</h1>
     <p id="loading" class="text-secondary">請稍候，正在準備啟動安裝程式</p>
-    <p id="error" class="fw-semibold">此作業系統不支援啟動安裝程式，請在 Windows 環境中開啟。</p>
+
+    <!-- Windows 手動開啟連結 -->
+    <div id="manualLink">
+      <p>若未自動啟動，請點此手動開啟：</p>
+      <a href="msinstall://installms/" class="btn btn-primary">開啟安裝程式</a>
+    </div>
+
+    <!-- 非 Windows 錯誤訊息 -->
+    <div id="error">
+      <p>此作業系統不支援啟動安裝程式，請在 Windows 環境中開啟。</p>
+      <a href="https://www.google.com" class="btn btn-outline-secondary mt-2">前往說明頁面</a>
+    </div>
   </main>
 
   <!-- 頁尾版本號 -->
@@ -80,34 +96,31 @@
 
   <script>
     const installUri = "msinstall://installms/";
-
-    // 判斷是否為 Windows
     const isWindows =
       navigator.userAgent.includes("Windows") ||
       (navigator.platform && navigator.platform.startsWith("Win"));
 
     if (isWindows) {
+      document.querySelector("h1").textContent = "正在啟動安裝程式...";
       document.getElementById("loading").textContent =
         "偵測到 Windows，正在啟動安裝程式...";
 
+      // 嘗試開啟 msinstall://
       try {
-        // 嘗試開啟協定
         window.location.href = installUri;
-
-        // 若 2.5 秒內未離開此頁，視為失敗 → 可加上錯誤提示或導向頁面
-        const timer = setTimeout(() => {
-          document.getElementById("loading").textContent = "無法啟動安裝程式，請確認應用程式已安裝。";
-        }, 2500);
-
-        // 若成功切換到外部應用程式，取消倒數
-        document.addEventListener("visibilitychange", () => {
-          if (document.hidden) clearTimeout(timer);
-        });
       } catch (e) {
-        document.getElementById("loading").textContent = "無法啟動安裝程式。";
+        console.error(e);
       }
+
+      // 顯示手動開啟連結（例如用戶沒允許外部開啟）
+      setTimeout(() => {
+        document.getElementById("manualLink").style.display = "block";
+        document.getElementById("loading").textContent =
+          "若未自動啟動，請手動開啟：";
+      }, 2000);
+
     } else {
-      // 非 Windows 系統
+      // 非 Windows 系統 → 顯示錯誤訊息與按鈕
       document.getElementById("loading").style.display = "none";
       document.getElementById("error").style.display = "block";
       document.title = "不支援的作業系統";
