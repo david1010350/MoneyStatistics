@@ -16,8 +16,9 @@
     body {
       font-family: "Segoe UI", "Noto Sans TC", system-ui, -apple-system, sans-serif;
       background-color: #f9fafb;
-      text-align: left; /* ✅ 讓整體靠左 */
+      text-align: left;
       padding: 60px 20px;
+   /*  user-select: none; /* 防止複製 */
     }
 
     header {
@@ -36,11 +37,11 @@
 
     main {
       max-width: 600px;
-      margin: 80px auto; /* 保持頁面置中但文字靠左 */
+      margin: 80px auto;
     }
 
     h1 {
-      font-size: 1.6rem; /* ✅ 比 display-6 再小一點 */
+      font-size: 1.4rem; /* 比原本再小一點 */
       font-weight: 700;
       margin-bottom: 1rem;
     }
@@ -71,6 +72,14 @@
       font-size: 9pt;
       color: gray;
     }
+
+    /* 防止右鍵操作 */
+    button, a {
+      -webkit-user-drag: none;
+    }
+    button {
+      pointer-events: auto;
+    }
   </style>
 </head>
 <body>
@@ -89,20 +98,20 @@
 
     <!-- Windows 手動開啟連結 -->
     <div id="manualLink">
-      <p>若未自動啟動，請點此手動開啟：</p>
-      <a href="msinstall://installms/" class="btn btn-primary">開啟安裝程式</a>
+      <p>若未自動啟動，請點擊下方按鈕開啟安裝程式：</p>
+      <button id="openBtn" class="btn btn-primary">開啟安裝程式</button>
     </div>
 
     <!-- 非 Windows 錯誤訊息 -->
     <div id="error">
       <p>此作業系統不支援啟動安裝程式，請在 Windows 環境中開啟。</p>
-      <a href="https://www.google.com" class="btn btn-outline-secondary mt-2">前往說明頁面</a>
+      <button id="helpBtn" class="btn btn-outline-secondary mt-2">前往說明頁面</button>
     </div>
   </main>
 
   <!-- 頁尾版本號 -->
   <footer>
-    版本 xx.xxx.xxx
+    版本 25.10.0022
   </footer>
 
   <script>
@@ -111,28 +120,43 @@
       navigator.userAgent.includes("Windows") ||
       (navigator.platform && navigator.platform.startsWith("Win"));
 
+    const openBtn = document.getElementById("openBtn");
+    const helpBtn = document.getElementById("helpBtn");
+
+    // ✅ 安全啟動應用程式（無法右鍵複製）
+   // openBtn.addEventListener("click", () => {
+    //  window.location.assign(installUri);
+   // });
+
+    // ✅ 非 Windows 的按鈕（隱藏連結內容）
+    helpBtn.addEventListener("click", () => {
+      window.location.assign("https://www.google.com");
+    });
+
+    // ✅ 系統判斷邏輯
     if (isWindows) {
       document.querySelector("h1").textContent = "正在啟動安裝程式...";
       document.getElementById("loading").textContent =
         "偵測到 Windows，正在啟動安裝程式...";
 
-      // 嘗試開啟 msinstall://
       try {
-        window.location.href = installUri;
+        // 嘗試自動開啟
+        window.location.assign(installUri);
       } catch (e) {
         console.error(e);
       }
 
-      // 顯示手動開啟連結
+      // 若未自動開啟 → 顯示手動按鈕
       setTimeout(() => {
         document.getElementById("manualLink").style.display = "block";
         document.getElementById("loading").textContent =
-          "若未自動啟動，請手動開啟：";
+          "若未自動啟動，請手動開啟 Money Statistics 安裝程式。";
       }, 2000);
     } else {
       // 非 Windows 系統
       document.getElementById("loading").style.display = "none";
       document.getElementById("error").style.display = "block";
+      document.querySelector("h1").textContent = "不支援的作業系統";
       document.title = "不支援的作業系統";
     }
   </script>
