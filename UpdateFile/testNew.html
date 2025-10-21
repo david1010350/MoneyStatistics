@@ -4,59 +4,110 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>啟動安裝程式</title>
+
+  <!-- ✅ Bootstrap 5 CDN -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+  ></script>
+
   <style>
     body {
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial;
+      font-family: "Segoe UI", "Noto Sans TC", system-ui, -apple-system, sans-serif;
+      background-color: #f9fafb;
       text-align: center;
-      padding: 50px;
+      padding: 60px 20px;
     }
+
+    header {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    header img {
+      height: 36px;
+      width: auto;
+    }
+
     #error {
       display: none;
-      color: red;
-      font-size: 20px;
+      color: #dc3545;
+      font-size: 1.2rem;
       margin-top: 20px;
     }
+
     #loading {
       color: #333;
-      font-size: 18px;
+      font-size: 1.1rem;
+      margin-top: 10px;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 9pt;
+      color: gray;
     }
   </style>
 </head>
+
 <body>
-  <h1>正在檢查作業系統...11</h1>
-  <p id="loading">請稍候，正在準備啟動安裝程式</p>
-  <p id="error">oho ho此作業系統不支援啟動安裝程式，請在 Windows 環境中開啟。</p>
+  <!-- 左上角 LOGO -->
+  <header>
+    <img src="https://www.dropbox.com/scl/fi/ew7cqkplri63ndno3gcb9/MSSign.png?rlkey=ladauape28nwec1zek5s9vd1o&st=enrs2v4x&dl=1" alt="MSSign Logo" />
+  </header>
+
+  <!-- 主要內容 -->
+  <main class="container mt-5 pt-5">
+    <h1 class="display-6 fw-bold mb-3">正在檢查作業系統...</h1>
+    <p id="loading" class="text-secondary">請稍候，正在準備啟動安裝程式</p>
+    <p id="error" class="fw-semibold">此作業系統不支援啟動安裝程式，請在 Windows 環境中開啟。</p>
+  </main>
+
+  <!-- 頁尾版本號 -->
+  <footer>
+    版本 xx.xxx.xxx
+  </footer>
 
   <script>
-    // 自訂協定
     const installUri = "msinstall://installms/";
-    
 
-    // 判斷是否是 Windows 作業系統
-    const isWindows = navigator.userAgent.includes("Windows") || navigator.platform.startsWith("Win");
+    // 判斷是否為 Windows
+    const isWindows =
+      navigator.userAgent.includes("Windows") ||
+      (navigator.platform && navigator.platform.startsWith("Win"));
 
     if (isWindows) {
-      // 顯示提示
-      document.getElementById("loading").textContent = "偵測到 Windows，正在啟動安裝程式...";
+      document.getElementById("loading").textContent =
+        "偵測到 Windows，正在啟動安裝程式...";
 
-      // 嘗試開啟 msinstall://
       try {
+        // 嘗試開啟協定
         window.location.href = installUri;
 
-        // 若 2.5 秒內未離開此頁（代表沒有成功開啟外部程式），導向 fallback
+        // 若 2.5 秒內未離開此頁，視為失敗 → 可加上錯誤提示或導向頁面
         const timer = setTimeout(() => {
-          window.location.href = fallbackPage;
+          document.getElementById("loading").textContent = "無法啟動安裝程式，請確認應用程式已安裝。";
         }, 2500);
 
-        // 若使用者切換到別的視窗（成功開啟外部程式），取消 fallback
+        // 若成功切換到外部應用程式，取消倒數
         document.addEventListener("visibilitychange", () => {
           if (document.hidden) clearTimeout(timer);
         });
       } catch (e) {
-        window.location.href = fallbackPage;
+        document.getElementById("loading").textContent = "無法啟動安裝程式。";
       }
     } else {
-      // 非 Windows 系統 → 顯示錯誤訊息
+      // 非 Windows 系統
       document.getElementById("loading").style.display = "none";
       document.getElementById("error").style.display = "block";
       document.title = "不支援的作業系統";
