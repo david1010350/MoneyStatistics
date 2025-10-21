@@ -23,13 +23,16 @@
   </style>
 </head>
 <body>
-  <h1>正在檢查作業系統...</h1>
+  <h1>正在檢查作業系統...11</h1>
   <p id="loading">請稍候，正在準備啟動安裝程式</p>
   <p id="error">此作業系統不支援啟動安裝程式，請在 Windows 環境中開啟。</p>
 
   <script>
     // 自訂協定
     const installUri = "msinstall://installms/";
+
+     // 若協定未註冊或被阻擋時的 fallback 頁面
+    const fallbackPage = "https://google.com/";
     
 
     // 判斷是否是 Windows 作業系統
