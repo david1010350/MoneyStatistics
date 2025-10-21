@@ -16,7 +16,7 @@
     body {
       font-family: "Segoe UI", "Noto Sans TC", system-ui, -apple-system, sans-serif;
       background-color: #f9fafb;
-      text-align: center;
+      text-align: left; /* ✅ 讓整體靠左 */
       padding: 60px 20px;
     }
 
@@ -34,16 +34,27 @@
       width: auto;
     }
 
+    main {
+      max-width: 600px;
+      margin: 80px auto; /* 保持頁面置中但文字靠左 */
+    }
+
+    h1 {
+      font-size: 1.6rem; /* ✅ 比 display-6 再小一點 */
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
     #error {
       display: none;
       color: #dc3545;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       margin-top: 20px;
     }
 
     #loading {
       color: #333;
-      font-size: 1.1rem;
+      font-size: 1rem;
       margin-top: 10px;
     }
 
@@ -72,8 +83,8 @@
   </header>
 
   <!-- 主要內容 -->
-  <main class="container mt-5 pt-5">
-    <h1 class="display-6 fw-bold mb-3">正在檢查作業系統...</h1>
+  <main class="container">
+    <h1>正在檢查作業系統...</h1>
     <p id="loading" class="text-secondary">請稍候，正在準備啟動安裝程式</p>
 
     <!-- Windows 手動開啟連結 -->
@@ -112,15 +123,14 @@
         console.error(e);
       }
 
-      // 顯示手動開啟連結（例如用戶沒允許外部開啟）
+      // 顯示手動開啟連結
       setTimeout(() => {
         document.getElementById("manualLink").style.display = "block";
         document.getElementById("loading").textContent =
           "若未自動啟動，請手動開啟：";
       }, 2000);
-
     } else {
-      // 非 Windows 系統 → 顯示錯誤訊息與按鈕
+      // 非 Windows 系統
       document.getElementById("loading").style.display = "none";
       document.getElementById("error").style.display = "block";
       document.title = "不支援的作業系統";
