@@ -12,7 +12,7 @@
   <p id="result"></p>
 
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbyp7XDUD5Sj7HXmwibWsAgydX7wekJV4ChcSvgldFfu_zdJJ_wojoUAKdWOUwZzqkc/exec"; // ←改成你的網址
+    const scriptURL = "https://script.google.com/macros/s/AKfycbwpBFDazAkn1lY9J4UEo1nJ5T0Ju_SPN19yOF_TT-Da3jp8BSS5Xg1mlL6hD8ep-LAp/exec"; // ←改成你的網址
 
     document.getElementById("submitBtn").addEventListener("click", async () => {
       const text = document.getElementById("textInput").value.trim();
@@ -28,11 +28,13 @@
           headers: { "Content-Type": "application/json" },
         });
 
-        const data = await response.json();
-        document.getElementById("result").innerText = data.message;
-      } catch (error) {
-        document.getElementById("result").innerText = "⚠️ 發生錯誤：" + error.message;
-      }
+        console.log("fetch response:", response); // debug
+  const data = await response.json();
+  document.getElementById("result").innerText = data.message;
+} catch (error) {
+  console.error("fetch error:", error);
+  document.getElementById("result").innerText = "⚠️ 發生錯誤：" + error.message;
+}
     });
   </script>
 </body>
