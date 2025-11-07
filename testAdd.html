@@ -1,79 +1,39 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>留言至試算表</title>
-  <style>
-    body {
-      font-family: "Noto Sans TC", sans-serif;
-      background: #f2f2f2;
-      padding: 20px;
-      text-align: center;
-    }
-    textarea {
-      width: 80%;
-      height: 100px;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      margin-bottom: 10px;
-      font-size: 16px;
-    }
-    button {
-      background: #4CAF50;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #45a049;
-    }
-    #status {
-      margin-top: 15px;
-      color: #333;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <title>留言上傳到試算表</title>
 </head>
 <body>
-  <h1>留言至試算表</h1>
-  <textarea id="message" placeholder="請輸入留言內容..."></textarea><br>
-  <button onclick="sendMessage()">送出</button>
-  <div id="status"></div>
+  <h2>新增留言</h2>
+  <input type="text" id="textInput" placeholder="輸入文字..." />
+  <button id="submitBtn">送出</button>
+
+  <p id="result"></p>
 
   <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzTvsoMdx0v_zFmnqhDHRRggkuQO3QayIM-i0EcnzJzty57j797DaqxGT_jkBu--pZq/exec'; // ← 換成你的 Apps Script 網址
+    const scriptURL = "https://script.google.com/macros/s/AKfycbyp7XDUD5Sj7HXmwibWsAgydX7wekJV4ChcSvgldFfu_zdJJ_wojoUAKdWOUwZzqkc/exec"; // ←改成你的網址
 
-    async function sendMessage() {
-      const msg = document.getElementById('message').value.trim();
-      const status = document.getElementById('status');
-
-      if (!msg) {
-        status.textContent = '請先輸入內容';
+    document.getElementById("submitBtn").addEventListener("click", async () => {
+      const text = document.getElementById("textInput").value.trim();
+      if (!text) {
+        document.getElementById("result").innerText = "請輸入內容";
         return;
       }
 
-      status.textContent = '傳送中...';
-
       try {
         const response = await fetch(scriptURL, {
-          method: 'POST',
-          body: JSON.stringify({ message: msg }),
-          headers: { 'Content-Type': 'application/json' }
+          method: "POST",
+          body: JSON.stringify({ text }),
+          headers: { "Content-Type": "application/json" },
         });
 
-        if (response.ok) {
-          status.textContent = '✅ 已成功寫入試算表！';
-          document.getElementById('message').value = '';
-        } else {
-          status.textContent = '❌ 傳送失敗，請稍後再試';
-        }
+        const data = await response.json();
+        document.getElementById("result").innerText = data.message;
       } catch (error) {
-        status.textContent = '⚠️ 發生錯誤：' + error;
+        document.getElementById("result").innerText = "⚠️ 發生錯誤：" + error.message;
       }
-    }
+    });
   </script>
 </body>
 </html>
