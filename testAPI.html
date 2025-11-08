@@ -1,56 +1,42 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Softr 註冊範例</title>
+<meta charset="UTF-8">
+<title>Softr 用戶建立</title>
+<style>
+body { font-family: sans-serif; padding: 20px; }
+input { display: block; margin: 8px 0; width: 240px; padding: 4px; }
+button { padding: 6px 12px; cursor: pointer; }
+pre { background: #f5f5f5; padding: 10px; white-space: pre-wrap; }
+</style>
 </head>
 <body>
-  <h2>Softr 註冊表單</h2>
+  <h2>建立 Softr 用戶</h2>
+  <input id="full_name" placeholder="姓名">
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="密碼">
+  <button onclick="sendData()">送出</button>
 
-  <label>姓名：</label>
-  <input type="text" id="full_name" placeholder="輸入姓名"><br><br>
-
-  <label>Email：</label>
-  <input type="email" id="email" placeholder="輸入信箱"><br><br>
-
-  <label>密碼：</label>
-  <input type="password" id="password" placeholder="輸入密碼"><br><br>
-
-  <button id="registerBtn">註冊 Softr 帳號</button>
-
-  <pre id="result" style="margin-top:20px; background:#eee; padding:10px;"></pre>
+  <h3>結果：</h3>
+  <pre id="result"></pre>
 
   <script>
-    document.getElementById("registerBtn").addEventListener("click", async () => {
-      const full_name = document.getElementById("full_name").value;
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+  function sendData() {
+    // 使用 window.external 傳資料給 VB.NET
+    const user = {
+      full_name: document.getElementById('full_name').value,
+      email: document.getElementById('email').value,
+      password: document.getElementById('password').value,
+      generate_magic_link: true
+    };
+    // 呼叫 VB.NET 端的方法
+    window.external.ReceiveData(JSON.stringify(user));
+  }
 
-      const bodyData = {
-        full_name,
-        email,
-        password,
-        generate_magic_link: true
-      };
-
-      try {
-        const response = await fetch("https://studio-api.softr.io/v1/api/users", {
-          method: "POST",
-          headers: {
-            "Softr-Api-Key": "oPTP9jZlJwpT2R4hZZY07MYIg",
-            "Softr-Domain": "moneystatisticsconsole.softr.app",
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(bodyData)
-        });
-
-        const result = await response.json();
-        document.getElementById("result").innerText = JSON.stringify(result, null, 2);
-      } catch (error) {
-        document.getElementById("result").innerText = "錯誤：" + error;
-      }
-    });
+  // VB.NET 會呼叫這個方法更新結果
+  function showResult(text) {
+    document.getElementById('result').textContent = text;
+  }
   </script>
 </body>
 </html>
