@@ -4,39 +4,39 @@
 <meta charset="UTF-8">
 <title>Softr 用戶建立</title>
 <style>
-body { font-family: sans-serif; padding: 20px; }
-input { display: block; margin: 8px 0; width: 240px; padding: 4px; }
-button { padding: 6px 12px; cursor: pointer; }
-pre { background: #f5f5f5; padding: 10px; white-space: pre-wrap; }
+  body { font-family: sans-serif; padding: 20px; }
+  input { display:block; margin-bottom:10px; padding:5px; width:200px; }
+  button { padding:5px 15px; }
+  pre { background:#f0f0f0; padding:10px; border-radius:5px; }
 </style>
 </head>
 <body>
   <h2>建立 Softr 用戶</h2>
-  <input id="full_name" placeholder="姓名">
+  <input id="name" placeholder="姓名">
   <input id="email" placeholder="Email">
   <input id="password" type="password" placeholder="密碼">
   <button onclick="sendData()">送出</button>
 
-  <h3>結果：</h3>
+  <h3>回應：</h3>
   <pre id="result"></pre>
 
   <script>
-  function sendData() {
-    // 使用 window.external 傳資料給 VB.NET
-    const user = {
-      full_name: document.getElementById('full_name').value,
-      email: document.getElementById('email').value,
-      password: document.getElementById('password').value,
-      generate_magic_link: true
-    };
-    // 呼叫 VB.NET 端的方法
-    window.external.ReceiveData(JSON.stringify(user));
-  }
+    async function sendData() {
+      const payload = {
+        full_name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value,
+        generate_magic_link: true
+      };
 
-  // VB.NET 會呼叫這個方法更新結果
-  function showResult(text) {
-    document.getElementById('result').textContent = text;
-  }
+      // 這裡是關鍵！呼叫 VB.NET 端的函數
+      window.chrome.webview.postMessage(JSON.stringify(payload));
+    }
+
+    // 接收 VB.NET 傳回的 Softr 回應
+    window.chrome.webview.addEventListener('message', e => {
+      document.getElementById('result').textContent = e.data;
+    });
   </script>
 </body>
 </html>
