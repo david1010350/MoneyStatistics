@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系統問題報修單</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #ffffff;
+            --text: #1e293b;
+            --border: #cbd5e1;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 50px 40px;
+            display: block;
+        }
+        .form-container {
+            background: transparent;
+            padding: 0;
+            border-radius: 0;
+            box-shadow: none;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        /* 頂部動態狀態看板 */
+        .status-board {
+            background-color: transparent;
+            padding: 0;
+            margin-bottom: 25px;
+            text-align: left;
+            border: none;
+            min-height: 65px; 
+            display: none; 
+            box-sizing: border-box;
+        }
+        
+        .status-item {
+            transition: all 0.3s ease;
+            line-height: 1.4;
+            text-align: left;
+        }
+
+        .text-large {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0f172a;
+        }
+
+        .text-small {
+            font-size: 14px;
+            font-weight: normal;
+            color: #64748b;
+        }
+
+        /* 隱藏未啟用步驟的區塊 */
+        .step-section {
+            display: none;
+        }
+        .step-section.active {
+            display: block;
+        }
+
+        /* 表單基本樣式 */
+        h2 {
+            margin-top: 0;
+            margin-bottom: 8px;
+            color: #0f172a;
+            font-size: 26px;
+            text-align: left;
+        }
+        .subtitle {
+            text-align: left;
+            color: #64748b;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 24px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 15px;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+            background-color: #fff;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* 檔案上傳特殊美化樣式 */
+        input[type="file"] {
+            padding: 8px;
+            background-color: #f8fafc;
+            cursor: pointer;
+        }
+
+        /* 🔒 被唯讀/鎖定的輸入框專屬樣式 */
+        input[readonly] {
+            background-color: #f1f5f9;  
+            color: #64748b;             
+            cursor: not-allowed;        
+            border-color: #e2e8f0;      
+            pointer-events: none;       
+        }
+        
+        input[readonly]:focus {
+            border-color: #e2e8f0 !important;
+            box-shadow: none !important;
+            outline: none !important;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        button {
+            padding: 12px 24px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: inline-block;
+            width: auto;
+        }
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+        button:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+        }
+        button.btn-secondary {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+        button.btn-secondary:hover {
+            background-color: #e2e8f0;
+        }
+        .message {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            display: none;
+            text-align: left;
+        }
+        .success {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        .error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>系統問題報修單</h2>
+    <div class="subtitle" id="formSubtitle">請先輸入您的基本資料進行身分驗證</div>
+
+    <div id="statusBoard" class="status-board">
+        <div id="statusApp" class="status-item text-large"></div>
+        <div id="statusSubject" class="status-item" style="margin-top: 6px; display: block; min-height: 33px; color: transparent;">&nbsp;</div>
+    </div>
+    
+    <form id="repairForm">
+        <div id="step0" class="step-section active">
+            <div class="form-group">
+                <label for="verifyEmail">註冊電子信箱 <span style="color:red;">*</span></label>
+                <input type="email" id="verifyEmail" required placeholder="example@company.com"> 
+            </div>
+
+            <div class="form-group">
+                <label for="verifyName">使用者姓名 <span style="color:red;">*</span></label>
+                <input type="text" id="verifyName" required placeholder="例如：王小明">
+            </div>
+            
+            <button type="button" id="verifyBtn" onclick="verifyUser()">進行身分驗證</button>
+            <div id="verifyMessage" class="message"></div>
+        </div>
+
+        <div id="step1" class="step-section">
+            <div class="form-group">
+                <label for="appName">請選擇發生問題的應用程式 <span style="color:red;">*</span></label>
+                <select id="appName" required>
+                    <option value="" disabled selected>-- 請選擇系統 --</option>
+                    <option value="系統A (客戶管理系統)">系統A (客戶管理系統)</option>
+                    <option value="系統B (ERP系統)">系統B (ERP系統)</option>
+                    <option value="系統C (官網前台)">系統C (官網前台)</option>
+                </select>
+            </div>
+            <button type="button" onclick="goToStep2()">下一步</button>
+        </div>
+
+        <div id="step2" class="step-section">
+            <div class="form-group">
+                <label for="name">您的姓名</label>
+                <input type="text" id="name" readonly tabindex="-1">
+            </div>
+            
+            <div class="form-group">
+                <label for="email">聯絡電子信箱</label>
+                <input type="email" id="email" readonly tabindex="-1">
+            </div>
+
+            <div class="form-group">
+                <label for="errorType">請選擇錯誤類型 <span style="color:red;">*</span></label>
+                <select id="errorType" required>
+                    <option value="" disabled selected>-- 請選擇錯誤類型 --</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="subject">主旨 <span style="color:red;">*</span></label>
+                <input type="text" id="subject" required placeholder="例如：無法登入系統並顯示錯誤代碼" oninput="handleSubjectInput()">
+            </div>
+            
+            <div class="form-group">
+                <label for="description">詳細錯誤描述</label>
+                <textarea id="description" placeholder="請描述發生錯誤時的操作步驟、錯誤訊息或畫面反應..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="attachment">附件檔案 <span style="font-size: 12px; font-weight: normal; color: #64748b;">(非必填，限制 10MB 以內)</span></label>
+                <input type="file" id="attachment" accept="image/*,application/pdf,.zip,.rar,.7z">
+            </div>
+            
+            <div class="btn-group">
+                <button type="button" class="btn-secondary" onclick="goToStep1()">上一步</button>
+                <button type="submit" id="submitBtn">提交報修單</button>
+            </div>
+        </div>
+    </form>
+    
+    <div id="responseMessage" class="message"></div>
+</div>
+
+<script>
+    // ⚠️ 這是您的 Google Apps Script API 網址 ⚠️
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxX3BCLLGb7oFISJ8NPSNFvVw8ayhguBQwT4z2_7eKI6f_EcsfqFY_t84Qi72XRRyYY/exec";
+
+    const errorOptions = {
+        "系統A (客戶管理系統)": [
+            "無法新增客戶資料",
+            "搜尋客戶功能失效",
+            "匯出 CSV 檔案亂碼",
+            "權限不足無法檢視"
+        ],
+        "系統B (ERP系統)": [
+            "採購單無法送審",
+            "庫存數量顯示不正確",
+            "系統載入過於緩慢",
+            "無法產生財務報表"
+        ],
+        "系統C (官網前台)": [
+            "首頁圖片無法載入",
+            "聯絡我們表單送出出錯",
+            "RWD 手機版畫面跑版",
+            "購物車無法加入商品"
+        ]
+    };
+
+    let verifiedUserData = {
+        name: "",
+        email: ""
+    };
+
+    // 執行身分驗證 (步驟零 -> 步驟一)
+    function verifyUser() {
+        const verifyName = document.getElementById("verifyName").value.trim();
+        const verifyEmail = document.getElementById("verifyEmail").value.trim();
+        const verifyBtn = document.getElementById("verifyBtn");
+        const verifyMsg = document.getElementById("verifyMessage");
+
+        if (!verifyName || !verifyEmail) {
+            alert("請填寫姓名與電子信箱！");
+            return;
+        }
+
+        verifyBtn.disabled = true;
+        verifyBtn.textContent = "驗證中，請稍候...";
+        verifyMsg.style.display = "none";
+
+        fetch(GAS_WEB_APP_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "text/plain"
+            },
+            body: JSON.stringify({
+                action: "verify",
+                name: verifyName,
+                email: verifyEmail
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                verifiedUserData.name = verifyName;
+                verifiedUserData.email = verifyEmail;
+                
+                document.getElementById("name").value = verifyName;
+                document.getElementById("email").value = verifyEmail;
+
+                document.getElementById("step0").classList.remove("active");
+                document.getElementById("step1").classList.add("active");
+                document.getElementById("formSubtitle").textContent = "請選擇您要回報的應用程式";
+            } else {
+                verifyMsg.className = "message error";
+                verifyMsg.textContent = "✗ " + data.message;
+                verifyMsg.style.display = "block";
+            }
+        })
+        .catch(err => {
+            verifyMsg.className = "message error";
+            verifyMsg.textContent = "✗ 驗證發送失敗，請確認網路或 API 部署設定。";
+            verifyMsg.style.display = "block";
+            console.error("Error:", err);
+        })
+        .finally(() => {
+            verifyBtn.disabled = false;
+            verifyBtn.textContent = "進行身分驗證";
+        });
+    }
+
+    // 前往步驟二
+    function goToStep2() {
+        const appName = document.getElementById("appName").value;
+        if (!appName) {
+            alert("請先選擇一個應用程式！");
+            return;
+        }
+
+        const errorSelect = document.getElementById("errorType");
+        errorSelect.innerHTML = '<option value="" disabled selected>-- 請選擇錯誤類型 --</option>';
+        errorOptions[appName].forEach(function(error) {
+            const option = document.createElement("option");
+            option.value = error;
+            option.textContent = error;
+            errorSelect.appendChild(option);
+        });
+
+        const statusBoard = document.getElementById("statusBoard");
+        const statusApp = document.getElementById("statusApp");
+        const statusSubject = document.getElementById("statusSubject");
+        
+        statusBoard.style.display = "block";
+        statusApp.className = "status-item text-large";
+        statusApp.textContent = appName;
+        
+        statusSubject.style.color = "transparent";
+        statusSubject.innerHTML = "&nbsp;"; 
+        document.getElementById("subject").value = "";
+
+        document.getElementById("step1").classList.remove("active");
+        document.getElementById("step2").classList.add("active");
+        document.getElementById("formSubtitle").textContent = "請填寫以下報修詳情";
+    }
+
+    // 回到步驟一
+    function goToStep1() {
+        document.getElementById("statusBoard").style.display = "none";
+        document.getElementById("step2").classList.remove("active");
+        document.getElementById("step1").classList.add("active");
+        document.getElementById("formSubtitle").textContent = "請選擇您要回報的應用程式";
+    }
+
+    // 當用戶手動輸入或修改「主旨」時觸發，即時同步更新頂部看板的文字狀態
+    function handleSubjectInput() {
+        const subjectValue = document.getElementById("subject").value;
+        updateTopStatus(subjectValue);
+    }
+
+    // 更新頂部動態文字的邏輯
+    function updateTopStatus(text) {
+        const statusApp = document.getElementById("statusApp");
+        const statusSubject = document.getElementById("statusSubject");
+
+        if (text.trim() !== "") {
+            statusApp.className = "status-item text-small";
+            statusSubject.textContent = `🚨 ${text}`;
+            statusSubject.style.color = "#0f172a"; 
+            statusSubject.className = "status-item text-large";
+        } else {
+            statusApp.className = "status-item text-large";
+            statusSubject.style.color = "transparent";
+            statusSubject.innerHTML = "&nbsp;";
+        }
+    }
+
+    // 處理表單提交
+    document.getElementById("repairForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        
+        const submitBtn = document.getElementById("submitBtn");
+        const responseMsg = document.getElementById("responseMessage");
+        const fileInput = document.getElementById("attachment");
+        
+        submitBtn.disabled = true;
+        submitBtn.textContent = "提交中，請稍候...";
+        responseMsg.style.display = "none";
+
+        const payload = {
+            action: "submit",
+            name: verifiedUserData.name,
+            email: verifiedUserData.email,
+            appName: document.getElementById("appName").value,
+            errorType: document.getElementById("errorType").value,
+            subject: document.getElementById("subject").value,
+            description: document.getElementById("description").value,
+            fileData: null,
+            fileName: null
+        };
+
+        // 讀取檔案轉換為 Base64
+        if (fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            
+            // 限制檔案大小 (10MB)
+            if (file.size > 10485760) {
+                alert("檔案太大了！請上傳 10MB 以內的檔案。");
+                submitBtn.disabled = false;
+                submitBtn.textContent = "提交報修單";
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                payload.fileData = e.target.result; // Base64 字串
+                payload.fileName = file.name;       // 檔案名稱
+                sendData(payload);                  // 進行發送
+            };
+            reader.readAsDataURL(file);
+        } else {
+            sendData(payload); // 無檔案時直接發送
+        }
+
+        // 實際發送資料至 GAS（已移除 no-cors 並正確處理回傳的 JSON 狀態）
+        function sendData(dataPayload) {
+            fetch(GAS_WEB_APP_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "text/plain" // 繞過部分預檢 CORS，傳遞資料
+                },
+                body: JSON.stringify(dataPayload)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    responseMsg.className = "message success";
+                    responseMsg.textContent = "✓ 報修表單（含附件）已成功送出！系統已收到您的回報。";
+                    responseMsg.style.display = "block";
+                    
+                    // 重設表單，回到步驟一
+                    document.getElementById("repairForm").reset();
+                    goToStep1();
+                    
+                    // 重新將已鎖定的姓名與信箱填回唯讀欄位中
+                    document.getElementById("name").value = verifiedUserData.name;
+                    document.getElementById("email").value = verifiedUserData.email;
+                } else {
+                    responseMsg.className = "message error";
+                    responseMsg.textContent = "✗ 提交失敗：" + data.message;
+                    responseMsg.style.display = "block";
+                }
+            })
+            .catch(err => {
+                responseMsg.className = "message error";
+                responseMsg.textContent = "✗ 提交失敗，請確認上傳檔案格式，或稍後再試。";
+                responseMsg.style.display = "block";
+                console.error("Error:", err);
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "提交報修單";
+            });
+        }
+    });
+</script>
+</body>
+</html>
