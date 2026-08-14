@@ -1,3 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>百分比轉換</title>
+
+    <!-- Iframely Embed -->
+    <link
+        rel="iframely"
+        href="https://david1010350.github.io/MoneyStatistics/Percentage_Cconversion.html"
+        type="text/html"
+    >
+
+</head>
+
+<body style="
+    margin: 0;
+    padding: 0;
+">
+
 <div style="
     margin: 10pt;
     display: flex;
@@ -7,12 +32,17 @@
     font-size: 15px;
 ">
 
-    <span>百分比：</span>
+    <!-- 百分比 -->
+
+    <span>
+        百分比：
+    </span>
 
     <input
         type="text"
         id="percentage"
         placeholder="例如 0.5"
+        inputmode="decimal"
         style="
             width: 90px;
             padding: 8px 12px;
@@ -22,10 +52,19 @@
             outline: none;
             box-sizing: border-box;
             transition: 0.2s;
+            background: white;
         "
-        onfocus="this.style.border='2px solid #0071e3'; this.style.boxShadow='0 0 0 3px rgba(0,113,227,0.15)'"
-        onblur="this.style.border='1px solid #d2d2d7'; this.style.boxShadow='none'"
+        onfocus="
+            this.style.border='2px solid #0071e3';
+            this.style.boxShadow='0 0 0 3px rgba(0,113,227,0.15)';
+        "
+        onblur="
+            this.style.border='1px solid #d2d2d7';
+            this.style.boxShadow='none';
+        "
     >
+
+    <!-- 轉換按鈕 -->
 
     <button
         onclick="convertPercentage()"
@@ -37,12 +76,23 @@
             color: white;
             font-size: 15px;
             cursor: pointer;
+            transition: 0.2s;
+        "
+        onmouseover="
+            this.style.background='#0077ed';
+        "
+        onmouseout="
+            this.style.background='#0071e3';
         "
     >
         轉換
     </button>
 
-    <span>轉換值：</span>
+    <!-- 轉換值 -->
+
+    <span>
+        轉換值：
+    </span>
 
     <input
         type="text"
@@ -62,15 +112,53 @@
 
 </div>
 
+
 <script>
+
 function convertPercentage() {
-    const percentage = document.getElementById("percentage").value;
+
+    const percentage =
+        document.getElementById("percentage").value.trim();
+
+    const result =
+        document.getElementById("result");
+
+
+    // 沒有輸入內容
 
     if (percentage === "") {
-        document.getElementById("result").value = "";
+
+        result.value = "";
+
         return;
     }
 
-    document.getElementById("result").value = Number(percentage) / 100;
+
+    // 轉換數值
+
+    const number =
+        Number(percentage);
+
+
+    // 判斷是否為有效數字
+
+    if (isNaN(number)) {
+
+        result.value = "";
+
+        return;
+    }
+
+
+    // 百分比轉換
+
+    result.value =
+        number / 100;
+
 }
+
 </script>
+
+</body>
+
+</html>
